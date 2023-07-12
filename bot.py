@@ -102,18 +102,18 @@ async def load_name(message: types.Message, state: FSMContext):
         data['name'] = message.text
     
     async with state.proxy() as data:
-        data = BotDB.get_coins(message.from_user.id, name=data["name"])
+        coins = BotDB.get_coins(message.from_user.id, name=data["name"])
         
-        if not data:
+        if not coins:
             await message.answer("Похоже что у вас совсем нет монет :(")
             return
-        names = [coin[1] for coin in data]
+        names = [coin[1] for coin in coins]
         if not (data['name'] in names):
             await message.reply("Такой монеты нет в списке")
             await state.finish()
             return
 
-        for coin in data:
+        for coin in coins:
             card = f'{hbold("Название: ")}{coin[1]}\n' \
                 f'{hbold("Описание: ")}{coin[2]}'
             await message.bot.send_photo(message.from_user.id, coin[3], card, reply_markup=kb.menu)
