@@ -75,15 +75,11 @@ async def load_description(message: types.Message, state: FSMContext):
 
 @dp.message_handler(content_types=['photo'] ,state=Coin.photo)
 async def load_photo(message: types.Message, state: FSMContext):
-    global count_of_images
-    count_of_images += 1
-
     async with state.proxy() as data:
         data['photo'] = message.photo[0].file_id
     
     async with state.proxy() as data:
         BotDB.add_coin(message.from_user.id, data['name'], data['description'], data['photo'])
-    await message.reply(f"{count_of_images}")
     await message.reply("✔️ Монета добавлена")
     await state.finish()
 
